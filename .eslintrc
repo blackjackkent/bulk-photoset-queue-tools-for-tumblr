@@ -1,0 +1,33 @@
+{
+	"env": {
+		"browser": true,
+		"es2021": true
+	},
+	"extends": ["airbnb-base"],
+	"parserOptions": {
+		"ecmaVersion": 13,
+		"sourceType": "module"
+	},
+	"ignorePatterns": ["backup/*"],
+	"rules": {
+		"comma-dangle": ["error", "never"],
+		"linebreak-style": ["error", "unix"],
+		"indent": [
+			"error",
+			"tab",
+			{
+				"SwitchCase": 1
+			}
+		],
+		"no-tabs": "off",
+		"class-methods-use-this": "off",
+		"no-plusplus": "off",
+		"arrow-body-style": ["error", "as-needed"],
+		"no-confusing-arrow": [
+			"error",
+			{
+				"allowParens": true
+			}
+		]
+	}
+}
