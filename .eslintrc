@@ -28,6 +28,7 @@
 			{
 				"allowParens": true
 			}
-		]
+		],
+		"operator-linebreak": "off"
 	}
 }
