@@ -1,7 +1,7 @@
 /* eslint-disable no-bitwise */
-const getShortcodeForString = (str) => {
+const getShortCodeForString = function (str) {
 	let hash = 0;
-	let chr = '';
+	let chr;
 	for (let i = 0; i < str.length; i++) {
 		chr = str.charCodeAt(i);
 		hash = (hash << 5) - hash + chr;
@@ -9,4 +9,4 @@ const getShortcodeForString = (str) => {
 	}
 	return hash;
 };
-export default getShortcodeForString;
+export default getShortCodeForString;

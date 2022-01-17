@@ -9,7 +9,7 @@ const SVG = (width, height, fill, viewBox, d) => {
 	svg.appendChild(path);
 	return svg;
 };
-
+// these SVG are stringed wierdly... TODO, clean decimals, maybe?
 const svgForType = {
 	home: SVG(
 		20,
