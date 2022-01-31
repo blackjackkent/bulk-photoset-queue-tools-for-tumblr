@@ -1,7 +1,7 @@
 /* eslint-disable no-continue */
 import svgForType from './utilities/svgForType';
+import appendRichButtons from './utilities/appendRichButtons';
 import getShortCodeForString from './utilities/getShortCodeForString';
-import loadPhotoIntoDOM from './utilities/loadPhotoIntoDOM';
 import rebuildPhotoColumn from './utilities/rebuildPhotoColumn';
 import butt from './utilities/butt';
 import photoUploadAndSubmit from './utilities/photoUploadAndSubmit';
@@ -10,11 +10,10 @@ class MassPostEditorFeatures {
 	constructor() {
 		this.href = document.location.href.split(/[/?&#=]+/g);
 		[, , , , this.username] = this.href;
-		this.editorNavigation =
-			document.getElementsByClassName('editor_navigation');
+		this.editorNavigation = document.getElementsByClassName('editor_navigation');
+		this.reading = [];
 		this.initLContent();
 		this.initPluginData();
-		this.initPluginStyles();
 		this.addBatchPhotosPageLink();
 		this.initBatchPhotosPage();
 	}
@@ -49,10 +48,7 @@ class MassPostEditorFeatures {
 		pluginData.setAttribute('data-unstable-next-href', '0');
 		pluginData.setAttribute('data-lt-to-select', '[]');
 		pluginData.setAttribute('data-gt-to-select', '[]');
-		pluginData.setAttribute(
-			'data-all-to-select',
-			'{"istag":[],"nottag":[],"istype":[],"nottype":[]}'
-		); // this ^ has the 4 dimensions of the select-by widget
+		pluginData.setAttribute('data-all-to-select', '{"istag":[],"nottag":[],"istype":[],"nottype":[]}'); // this ^ has the 4 dimensions of the select-by widget
 		pluginData.setAttribute('data-to-select', '[]');
 		pluginData.setAttribute('data-tags_all_arr', '[]');
 		pluginData.setAttribute('data-ids_all_arr', '[]');
@@ -88,20 +84,14 @@ class MassPostEditorFeatures {
 		const pluginDataShell = document.createElement('div');
 		pluginDataShell.appendChild(pluginData);
 		document.body.insertBefore(pluginDataShell, document.body.firstChild);
-		this.pluginData = document.getElementById(
-			'mass_post_features-plugin_data'
-		);
+		this.pluginData = document.getElementById('mass_post_features-plugin_data');
 	}
 
 	initPluginStyles() {
 		const pluginStyle = document.createElement('style');
 		pluginStyle.id = 'mass_post_features-plugin_style';
 		pluginStyle.type = 'text/css';
-		pluginStyle.appendChild(
-			document.createTextNode(
-				`${
-					function () {
-						/*
+		let css = `
 
 h2 {
   display: block;
@@ -1077,6 +1067,7 @@ a.blog_title {
   color: inherit;
   font-weight: bold;
 }
+
 
 .chrome_button h2 {
   vertical-align: sub;
@@ -2078,79 +2069,77 @@ a.open {
 .l-content .brick.prevent-anim,
 .l-content .brick.highlighted.picked {
   animation: none;
-}
-*/
-					}
-						.toString()
-						.slice(15, -3) // this is a pointing hand graphic
-				}.l-content .brick.picked:before { content: ""; top: -35px;\n` +
-					'width: 50px; height: 50px; position: absolute;left: 25px;\n' +
-					'animation: updown 0.5s infinite ease-out both;\n' + // bounces up&down :)
-					'background: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iM' +
-					'S4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgeG1sbnM' +
-					'6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICB4bWxuczpjYz0ia' +
-					'HR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIgogICB4bWxuczpyZGY9Imh0dHA6Ly9' +
-					'3d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiCiAgIHhtbG5zOnN2Zz0ia' +
-					'HR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9' +
-					'yZy8yMDAwL3N2ZyIKICAgeG1sbnM6c29kaXBvZGk9Imh0dHA6Ly9zb2RpcG9kaS5zb3VyY' +
-					'2Vmb3JnZS5uZXQvRFREL3NvZGlwb2RpLTAuZHRkIgogICB4bWxuczppbmtzY2FwZT0iaHR' +
-					'0cDovL3d3dy5pbmtzY2FwZS5vcmcvbmFtZXNwYWNlcy9pbmtzY2FwZSIKICAgd2lkdGg9I' +
-					'jI0IgogICBoZWlnaHQ9IjI0IgogICB2aWV3Qm94PSIwIDAgMjQgMjQiCiAgIHZlcnNpb24' +
-					'9IjEuMSIKICAgaWQ9InN2ZzQiCiAgIHNvZGlwb2RpOmRvY25hbWU9ImI2NC5zdmciCiAgI' +
-					'Glua3NjYXBlOnZlcnNpb249IjAuOS41ICgyMDYwZWMxZjlmLCAyMDIwLTA0LTA4KSI+CiA' +
-					'gPG1ldGFkYXRhCiAgICAgaWQ9Im1ldGFkYXRhMTAiPgogICAgPHJkZjpSREY+CiAgICAgI' +
-					'DxjYzpXb3JrCiAgICAgICAgIHJkZjphYm91dD0iIj4KICAgICAgICA8ZGM6Zm9ybWF0Pml' +
-					'tYWdlL3N2Zyt4bWw8L2RjOmZvcm1hdD4KICAgICAgICA8ZGM6dHlwZQogICAgICAgICAgI' +
-					'HJkZjpyZXNvdXJjZT0iaHR0cDovL3B1cmwub3JnL2RjL2RjbWl0eXBlL1N0aWxsSW1hZ2U' +
-					'iIC8+CiAgICAgICAgPGRjOnRpdGxlPjwvZGM6dGl0bGU+CiAgICAgIDwvY2M6V29yaz4KI' +
-					'CAgIDwvcmRmOlJERj4KICA8L21ldGFkYXRhPgogIDxkZWZzCiAgICAgaWQ9ImRlZnM4IiA' +
-					'vPgogIDxzb2RpcG9kaTpuYW1lZHZpZXcKICAgICBwYWdlY29sb3I9IiNmZmZmZmYiCiAgI' +
-					'CAgYm9yZGVyY29sb3I9IiM2NjY2NjYiCiAgICAgYm9yZGVyb3BhY2l0eT0iMSIKICAgICB' +
-					'vYmplY3R0b2xlcmFuY2U9IjEwIgogICAgIGdyaWR0b2xlcmFuY2U9IjEwIgogICAgIGd1a' +
-					'WRldG9sZXJhbmNlPSIxMCIKICAgICBpbmtzY2FwZTpwYWdlb3BhY2l0eT0iMCIKICAgICB' +
-					'pbmtzY2FwZTpwYWdlc2hhZG93PSIyIgogICAgIGlua3NjYXBlOndpbmRvdy13aWR0aD0iN' +
-					'zMyIgogICAgIGlua3NjYXBlOndpbmRvdy1oZWlnaHQ9IjQ4MCIKICAgICBpZD0ibmFtZWR' +
-					'2aWV3NiIKICAgICBzaG93Z3JpZD0iZmFsc2UiCiAgICAgaW5rc2NhcGU6em9vbT0iOS44I' +
-					'gogICAgIGlua3NjYXBlOmN4PSIxMiIKICAgICBpbmtzY2FwZTpjeT0iMTIiCiAgICAgaW5' +
-					'rc2NhcGU6d2luZG93LXg9IjAiCiAgICAgaW5rc2NhcGU6d2luZG93LXk9IjAiCiAgICAga' +
-					'W5rc2NhcGU6d2luZG93LW1heGltaXplZD0iMCIKICAgICBpbmtzY2FwZTpjdXJyZW50LWx' +
-					'heWVyPSJzdmc0IiAvPgogIDxwYXRoCiAgICAgZD0ibSA1LjQsMTYuNCBjIDEuMSwwLjIgN' +
-					'C42LDAuOSA1LjUsMS4wIHYgMy41IGMgMCwxLjYgMS4zLDIuOSAzLDIuOSAxLjYsMCAzLC0' +
-					'xLjMgMywtMi45IHYgLTcuNCBjIDAuNSwwLjMgMS4xLDAuNiAxLjgsMC43IEMgMjAuNiwxN' +
-					'C41IDIyLDEzLjMgMjIsMTEuOCAyMiwxMSAyMS42LDEwLjEgMjAuOSw5LjUgMTcuMCw1LjU' +
-					'gMTUuMiw0LjQgMTQuOSwwIEggNSB2IDEuNyBjIDAsNS4xIC0zLDYuMCAtMywxMC4wIDAsM' +
-					'i40IDEuMCw0LjEgMy40LDQuNiB6IgogICAgIGlkPSJwYXRoMTQiIC8+CiAgPHBhdGgKICA' +
-					'gICBkPSJNIDUuMSw4LjQgQyA1LjksNi45IDYuOSw1LjEgNi45LDIgaCA2LjEgYyAwLjcsM' +
-					'y44IDMuOCw2LjMgNi40LDguOSAwLjYsMC42IDAuMywxLjMgLTAuNCwxLjMgQyAxNy44LDE' +
-					'yLjMgMTYuMCwxMC40IDE1LDkuMSBWIDIxLjAgQyAxNSwyMS41IDE0LjUsMjIgMTQsMjIgM' +
-					'TMuNCwyMiAxMywyMS41IDEzLDIxLjAgdiAtNi45IGMgMCwtMC4zIC0wLjIsLTAuNSAtMC4' +
-					'1LC0wLjUgLTAuMywwIC0wLjUsMC4yIC0wLjUsMC41IHYgMC41IGMgMCwwLjUgLTAuNCwwL' +
-					'jkgLTEuMCwwLjggLTAuMywtMC4wIC0wLjYsLTAuNCAtMC42LC0wLjggdiAtMS4yIGMgMCw' +
-					'tMC4zIC0wLjIsLTAuNSAtMC41LC0wLjUgLTAuMywwIC0wLjUsMC4yIC0wLjUsMC41IHYgM' +
-					'C44IGMgMCwwLjUgLTAuNCwwLjkgLTEuMCwwLjggQyA3LjYsMTQuOSA3LjMsMTQuNiA3LjM' +
-					'sMTQuMiB2IC0xLjUgYyAwLC0wLjMgLTAuMiwtMC41IC0wLjUsLTAuNSAtMC4zLDAgLTAuN' +
-					'SwwLjIgLTAuNSwwLjUgdiAwLjkgYyAwLDAuNSAtMC41LDAuOCAtMS4wLDAuNiBDIDQuNSw' +
-					'xMy45IDQsMTMuMyA0LDExLjcgNCwxMC40IDQuNCw5LjUgNS4xLDguNCBaIgogICAgIGlkP' +
-					'SJwYXRoMiIKICAgICBzdHlsZT0iZmlsbDojZmZmZmZmIiAvPgo8L3N2Zz4K") 0 0 ' +
-					'no-repeat transparent;\nbackground-size: 50px 50px; z-index: 1001;}' +
-					// this ^ is a hand pointing pointer graphic
-					// this v is a tiny robot head icon
-					'.robot-warning { padding: 8px 9px 8px 21px;' + // :) tampermonkey tells
-					'background: 4px 2px no-repeat url("' + //  me it's superfluous to combine
-					'data:image/png;base64,iVBORw0KGgoAAAANSU' + //  string literals with the
-					'hEUgAAABAAAAAYBAMAAAABjmA/AAAAElBMVEUAAA' + // + operator! but it's
-					'ABBABHSEajnp28trX8//tPIl81AAAAAXRSTlMAQO' + // also not lint to
-					'bYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAALiMAAC' + // go above 80 characters
-					'4jAXilP3YAAAAHdElNRQfkBQgSLgK2/ku1AAAAa0' + // in width...
-					'lEQVQI123O2w3AIAgFUNygoAxANzBxAasL+OH+qx' + // dear StackExchange...
-					'R8tGnS+3USLgEAAIQZ148J7m0jr9G1Rk8Z3Be4An' +
-					'SOCIQ6khWp1mKIkgp5BfeQe/tFxFTQOsW2k4KIRM' + // kumate!
-					'Q6zK1ZxxuiQuwk5ffWfuMG6yMYLhjK67sAAAAASU' +
-					'VORK5CYII=") rgba(255,190,170,1);' +
-					'box-shadow: 0 0 0 1px red;font-size: 12px;font-weight: normal;' +
-					'color: red; width: 172px;overflow-wrap: normal;' +
-					`white-space: normal;margin: 9px;display:block;}${function () {
-						/*
+}`;
+
+		css +=
+			'.l-content .brick.picked:before { content: ""; top: -35px;\n' +
+			'width: 50px; height: 50px; position: absolute;left: 25px;\n' +
+			'animation: updown 0.5s infinite ease-out both;\n' + // bounces up&down :)
+			'background: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iM' +
+			'S4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9Im5vIj8+CjxzdmcKICAgeG1sbnM' +
+			'6ZGM9Imh0dHA6Ly9wdXJsLm9yZy9kYy9lbGVtZW50cy8xLjEvIgogICB4bWxuczpjYz0ia' +
+			'HR0cDovL2NyZWF0aXZlY29tbW9ucy5vcmcvbnMjIgogICB4bWxuczpyZGY9Imh0dHA6Ly9' +
+			'3d3cudzMub3JnLzE5OTkvMDIvMjItcmRmLXN5bnRheC1ucyMiCiAgIHhtbG5zOnN2Zz0ia' +
+			'HR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciCiAgIHhtbG5zPSJodHRwOi8vd3d3LnczLm9' +
+			'yZy8yMDAwL3N2ZyIKICAgeG1sbnM6c29kaXBvZGk9Imh0dHA6Ly9zb2RpcG9kaS5zb3VyY' +
+			'2Vmb3JnZS5uZXQvRFREL3NvZGlwb2RpLTAuZHRkIgogICB4bWxuczppbmtzY2FwZT0iaHR' +
+			'0cDovL3d3dy5pbmtzY2FwZS5vcmcvbmFtZXNwYWNlcy9pbmtzY2FwZSIKICAgd2lkdGg9I' +
+			'jI0IgogICBoZWlnaHQ9IjI0IgogICB2aWV3Qm94PSIwIDAgMjQgMjQiCiAgIHZlcnNpb24' +
+			'9IjEuMSIKICAgaWQ9InN2ZzQiCiAgIHNvZGlwb2RpOmRvY25hbWU9ImI2NC5zdmciCiAgI' +
+			'Glua3NjYXBlOnZlcnNpb249IjAuOS41ICgyMDYwZWMxZjlmLCAyMDIwLTA0LTA4KSI+CiA' +
+			'gPG1ldGFkYXRhCiAgICAgaWQ9Im1ldGFkYXRhMTAiPgogICAgPHJkZjpSREY+CiAgICAgI' +
+			'DxjYzpXb3JrCiAgICAgICAgIHJkZjphYm91dD0iIj4KICAgICAgICA8ZGM6Zm9ybWF0Pml' +
+			'tYWdlL3N2Zyt4bWw8L2RjOmZvcm1hdD4KICAgICAgICA8ZGM6dHlwZQogICAgICAgICAgI' +
+			'HJkZjpyZXNvdXJjZT0iaHR0cDovL3B1cmwub3JnL2RjL2RjbWl0eXBlL1N0aWxsSW1hZ2U' +
+			'iIC8+CiAgICAgICAgPGRjOnRpdGxlPjwvZGM6dGl0bGU+CiAgICAgIDwvY2M6V29yaz4KI' +
+			'CAgIDwvcmRmOlJERj4KICA8L21ldGFkYXRhPgogIDxkZWZzCiAgICAgaWQ9ImRlZnM4IiA' +
+			'vPgogIDxzb2RpcG9kaTpuYW1lZHZpZXcKICAgICBwYWdlY29sb3I9IiNmZmZmZmYiCiAgI' +
+			'CAgYm9yZGVyY29sb3I9IiM2NjY2NjYiCiAgICAgYm9yZGVyb3BhY2l0eT0iMSIKICAgICB' +
+			'vYmplY3R0b2xlcmFuY2U9IjEwIgogICAgIGdyaWR0b2xlcmFuY2U9IjEwIgogICAgIGd1a' +
+			'WRldG9sZXJhbmNlPSIxMCIKICAgICBpbmtzY2FwZTpwYWdlb3BhY2l0eT0iMCIKICAgICB' +
+			'pbmtzY2FwZTpwYWdlc2hhZG93PSIyIgogICAgIGlua3NjYXBlOndpbmRvdy13aWR0aD0iN' +
+			'zMyIgogICAgIGlua3NjYXBlOndpbmRvdy1oZWlnaHQ9IjQ4MCIKICAgICBpZD0ibmFtZWR' +
+			'2aWV3NiIKICAgICBzaG93Z3JpZD0iZmFsc2UiCiAgICAgaW5rc2NhcGU6em9vbT0iOS44I' +
+			'gogICAgIGlua3NjYXBlOmN4PSIxMiIKICAgICBpbmtzY2FwZTpjeT0iMTIiCiAgICAgaW5' +
+			'rc2NhcGU6d2luZG93LXg9IjAiCiAgICAgaW5rc2NhcGU6d2luZG93LXk9IjAiCiAgICAga' +
+			'W5rc2NhcGU6d2luZG93LW1heGltaXplZD0iMCIKICAgICBpbmtzY2FwZTpjdXJyZW50LWx' +
+			'heWVyPSJzdmc0IiAvPgogIDxwYXRoCiAgICAgZD0ibSA1LjQsMTYuNCBjIDEuMSwwLjIgN' +
+			'C42LDAuOSA1LjUsMS4wIHYgMy41IGMgMCwxLjYgMS4zLDIuOSAzLDIuOSAxLjYsMCAzLC0' +
+			'xLjMgMywtMi45IHYgLTcuNCBjIDAuNSwwLjMgMS4xLDAuNiAxLjgsMC43IEMgMjAuNiwxN' +
+			'C41IDIyLDEzLjMgMjIsMTEuOCAyMiwxMSAyMS42LDEwLjEgMjAuOSw5LjUgMTcuMCw1LjU' +
+			'gMTUuMiw0LjQgMTQuOSwwIEggNSB2IDEuNyBjIDAsNS4xIC0zLDYuMCAtMywxMC4wIDAsM' +
+			'i40IDEuMCw0LjEgMy40LDQuNiB6IgogICAgIGlkPSJwYXRoMTQiIC8+CiAgPHBhdGgKICA' +
+			'gICBkPSJNIDUuMSw4LjQgQyA1LjksNi45IDYuOSw1LjEgNi45LDIgaCA2LjEgYyAwLjcsM' +
+			'y44IDMuOCw2LjMgNi40LDguOSAwLjYsMC42IDAuMywxLjMgLTAuNCwxLjMgQyAxNy44LDE' +
+			'yLjMgMTYuMCwxMC40IDE1LDkuMSBWIDIxLjAgQyAxNSwyMS41IDE0LjUsMjIgMTQsMjIgM' +
+			'TMuNCwyMiAxMywyMS41IDEzLDIxLjAgdiAtNi45IGMgMCwtMC4zIC0wLjIsLTAuNSAtMC4' +
+			'1LC0wLjUgLTAuMywwIC0wLjUsMC4yIC0wLjUsMC41IHYgMC41IGMgMCwwLjUgLTAuNCwwL' +
+			'jkgLTEuMCwwLjggLTAuMywtMC4wIC0wLjYsLTAuNCAtMC42LC0wLjggdiAtMS4yIGMgMCw' +
+			'tMC4zIC0wLjIsLTAuNSAtMC41LC0wLjUgLTAuMywwIC0wLjUsMC4yIC0wLjUsMC41IHYgM' +
+			'C44IGMgMCwwLjUgLTAuNCwwLjkgLTEuMCwwLjggQyA3LjYsMTQuOSA3LjMsMTQuNiA3LjM' +
+			'sMTQuMiB2IC0xLjUgYyAwLC0wLjMgLTAuMiwtMC41IC0wLjUsLTAuNSAtMC4zLDAgLTAuN' +
+			'SwwLjIgLTAuNSwwLjUgdiAwLjkgYyAwLDAuNSAtMC41LDAuOCAtMS4wLDAuNiBDIDQuNSw' +
+			'xMy45IDQsMTMuMyA0LDExLjcgNCwxMC40IDQuNCw5LjUgNS4xLDguNCBaIgogICAgIGlkP' +
+			'SJwYXRoMiIKICAgICBzdHlsZT0iZmlsbDojZmZmZmZmIiAvPgo8L3N2Zz4K") 0 0 ' +
+			'no-repeat transparent;\nbackground-size: 50px 50px; z-index: 1001;}' +
+			// this ^ is a hand pointing pointer graphic
+			// this v is a tiny robot head icon
+			'.robot-warning { padding: 8px 9px 8px 21px;' + // :) tampermonkey tells
+			'background: 4px 2px no-repeat url("' + //  me it's superfluous to combine
+			'data:image/png;base64,iVBORw0KGgoAAAANSU' + //  string literals with the
+			'hEUgAAABAAAAAYBAMAAAABjmA/AAAAElBMVEUAAA' + // + operator! but it's
+			'ABBABHSEajnp28trX8//tPIl81AAAAAXRSTlMAQO' + // also not lint to
+			'bYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAALiMAAC' + // go above 80 characters
+			'4jAXilP3YAAAAHdElNRQfkBQgSLgK2/ku1AAAAa0' + // in width...
+			'lEQVQI123O2w3AIAgFUNygoAxANzBxAasL+OH+qx' + // dear StackExchange...
+			'R8tGnS+3USLgEAAIQZ148J7m0jr9G1Rk8Z3Be4An' +
+			'SOCIQ6khWp1mKIkgp5BfeQe/tFxFTQOsW2k4KIRM' + // kumate!
+			'Q6zK1ZxxuiQuwk5ffWfuMG6yMYLhjK67sAAAAASU' +
+			'VORK5CYII=") rgba(255,190,170,1);' +
+			'box-shadow: 0 0 0 1px red;font-size: 12px;font-weight: normal;' +
+			'color: red; width: 172px;overflow-wrap: normal;' +
+			'white-space: normal;margin: 9px;display:block;}';
+		css += `
 .l-content .brick .private_overlay {
   z-index: 9;
 }
@@ -3496,14 +3485,10 @@ span.im-ready {
 
 .l-content~.l-content {
   display: none;
-}
-*/
-					}
-						.toString()
-						.slice(15, -3)}`
-			)
-		);
+}`;
+		// all of my extra css are in this ^ inline style
 		document.head.appendChild(pluginStyle);
+		pluginStyle.appendChild(document.createTextNode(css));
 	}
 
 	addBatchPhotosPageLink() {
@@ -3516,10 +3501,7 @@ span.im-ready {
 		navPhoto.getElementsByTagName('svg')[0].setAttribute('height', 15);
 		navPhoto.getElementsByTagName('svg')[0].setAttribute('fill', '#fff');
 		navPhoto.classList.add('post-state-nav-item');
-		navPhoto.setAttribute(
-			'href',
-			`/mega-editor/published/${this.username}?photos`
-		);
+		navPhoto.setAttribute('href', `/mega-editor/published/${this.username}?photos`);
 		navLinks[0].parentNode.appendChild(navPhoto);
 	}
 
@@ -3545,15 +3527,15 @@ span.im-ready {
 	initBatchPhotosPage() {
 		const { href, username, pluginData, lcontent, editorNavigation } = this;
 		const unreadFile = {};
-		const reading = [
+		this.reading = [
 			{
 				read: rebuildPhotoColumn
 			}
 		];
-
-		if (!href[3] === 'published' || !href[5] === 'photos') {
+		if (!(href[3] === 'published') || !(href[5] === 'photos')) {
 			return;
 		}
+		this.initPluginStyles();
 		this.removeTumblrViewLogic();
 		const navArchive = document.getElementById('nav_archive');
 		navArchive.style.zIndex = '1000';
@@ -3661,22 +3643,19 @@ span.im-ready {
 				}
 				r = new FileReader();
 				r.imgCode = `img${getShortCodeForString(files[i].name)}`;
-				r.addEventListener('load', (event) =>
-					loadPhotoIntoDOM(event, reading)
-				);
-				reading.push({
-					read() {
-						reading[reading.length - 1].reader.readAsDataURL(
-							reading[reading.length - 1].file
+				r.addEventListener('load', this.loadPhotoIntoDOM);
+				this.reading.push({
+					read: () => {
+						this.reading[this.reading.length - 1].reader.readAsDataURL(
+							this.reading[this.reading.length - 1].file
 						);
 					},
 					file: files[i],
 					reader: r
 				});
-				unreadFile[`img${getShortCodeForString(files[i].name)}`] =
-					files[i];
+				unreadFile[`img${getShortCodeForString(files[i].name)}`] = files[i];
 			}
-			reading[reading.length - 1].read();
+			this.reading[this.reading.length - 1].read();
 		};
 		// remove all navigation buttons, editor widgets, and start anew
 		editorNavigation[0].parentNode.removeChild(editorNavigation[0]);
@@ -3695,18 +3674,14 @@ span.im-ready {
 		postPhotos.disabled = true;
 		postPhotos.id = 'post_all_photos_button';
 		postPhotos.setAttribute('title', 'Post All Photos');
-		postPhotos.addEventListener('click', () =>
-			photoUploadAndSubmit(unreadFile, username)
-		);
+		postPhotos.addEventListener('click', () => photoUploadAndSubmit(unreadFile, username));
 		const photosAsDraft = document.createElement('input');
 		photosAsDraft.id = 'photos_as_draft';
 		photosAsDraft.type = 'checkbox';
 		photosAsDraft.checked = true;
 		const photosAsDraftLabel = document.createElement('label');
 		photosAsDraftLabel.setAttribute('for', 'photos_as_draft');
-		photosAsDraftLabel.appendChild(
-			document.createTextNode('New Photo/Photoset Posts')
-		);
+		photosAsDraftLabel.appendChild(document.createTextNode('New Photo/Photoset Posts'));
 		const asB = document.createElement('strong');
 		asB.appendChild(document.createTextNode(' as Draft'));
 		photosAsDraftLabel.appendChild(asB);
@@ -3717,14 +3692,11 @@ span.im-ready {
 		const photosRobotWarning = document.createElement('div');
 		photosRobotWarning.classList.add('robot-warning');
 		const robotTitlePhotos = document.createElement('strong');
-		robotTitlePhotos.appendChild(
-			document.createTextNode('Friendly Robot Warning')
-		);
+		robotTitlePhotos.appendChild(document.createTextNode('Friendly Robot Warning'));
 		photosRobotWarning.appendChild(robotTitlePhotos);
 		photosRobotWarning.appendChild(
 			document.createTextNode(
-				'Dash flooding might make you lose followers. ' +
-					'Perhaps "check" post "as draft" instead?'
+				'Dash flooding might make you lose followers. ' + 'Perhaps "check" post "as draft" instead?'
 			)
 		);
 		photosAsDraftContainer.appendChild(photosRobotWarning);
@@ -3733,18 +3705,134 @@ span.im-ready {
 		document.body.appendChild(postPhotos);
 		document.body.appendChild(dropTitle);
 		document.body.appendChild(dropZone);
-		document.documentElement.addEventListener(
-			'dragenter',
-			dragEnter,
-			false
-		);
+		document.documentElement.addEventListener('dragenter', dragEnter, false);
 		document.documentElement.addEventListener('dragover', dragEnter, false);
-		document.documentElement.addEventListener(
-			'dragleave',
-			dragLeave,
-			false
-		);
+		document.documentElement.addEventListener('dragleave', dragLeave, false);
 		document.documentElement.addEventListener('drop', drop, false);
+	}
+
+	loadPhotoIntoDOM(reloadedImg) {
+		const lcontent = document.getElementsByClassName('l-content')[0];
+		const data = document.getElementById('mass_post_features-plugin_data');
+		let brickIndex = 0;
+		// new photo-brick
+		const brick = document.createElement('div');
+		const brickInner = document.createElement('div');
+		brickInner.classList.add('photo-inner');
+		brick.classList.add('photo-brick');
+		brick.style.top = '-150px';
+		brick.style.left = '420px';
+		brick.setAttribute('onclick', 'window.just_clicked_add_tags = true;');
+		brick.id = `photo-brick_${brickIndex}`;
+		const img = new Image();
+		if (
+			typeof reloadedImg !== 'undefined' &&
+			typeof reloadedImg.target !== 'undefined' &&
+			typeof reloadedImg.target.imgCode !== 'undefined'
+		) {
+			img.setAttribute('img-code', reloadedImg.target.imgCode);
+		}
+		img.style.visibility = 'hidden';
+		img.setAttribute('data-id', brick.id);
+		const pbi = document.createElement('div');
+		pbi.setAttribute('data-id', brick.id);
+		pbi.classList.add('row-with-one-img');
+		pbi.classList.add('photo-brick-img');
+		const pbic = document.createElement('div');
+		pbic.classList.add('photo-brick-img-cell');
+		const observer = document.createElement('div');
+		observer.classList.add('resize-observer');
+		// rebuildColumn after single photo dragged / resized
+		new ResizeObserver(rebuildPhotoColumn).observe(observer);
+		// these ^ are cool :)
+		// editor portion
+		const pbe = document.createElement('div');
+		pbe.classList.add('photo-brick-edit');
+		const rich = document.createElement('div');
+		rich.setAttribute('title', 'caption');
+		rich.id = `rich_text_${brickIndex}`;
+		rich.setAttribute('data-id', brickIndex);
+		const tags = document.createElement('div');
+		tags.setAttribute('data-id', brickIndex);
+		tags.classList.add('photo-tags');
+		tags.addEventListener('click', () => {
+			if (!brick.classList.contains('focused-rich')) {
+				rich.focus();
+			}
+		});
+		tags.id = `photo_tags_${brickIndex}`;
+		rich.contentEditable = true;
+		rich.designMode = 'on';
+		rich.classList.add('rich');
+		rich.addEventListener('focus', () => {
+			if (data.classList.contains('photo-upload-in-progress')) {
+				return;
+			}
+			if (!brick.classList.contains('focused-rich')) {
+				const fr = document.getElementsByClassName('focused-rich');
+				while (fr.length > 0) {
+					fr[0].classList.remove('focused-rich');
+				}
+				const addTagsWidget = document.getElementById('add_tags_widget');
+				addTagsWidget.style.display = 'block';
+				brick.classList.add('focused-rich');
+			}
+		});
+		pbe.appendChild(rich);
+		pbe.appendChild(tags);
+		const stripe = document.createElement('div');
+		stripe.classList.add('stripe');
+		const clone = butt('Clone ABC');
+		clone.classList.add(clone.id);
+		clone.removeAttribute('id');
+		clone.addEventListener('click', () => {
+			const otherRich = document.getElementsByClassName('rich');
+			for (let i = 0; i < otherRich.length; i++) {
+				if (otherRich[i] === rich) {
+					continue;
+				}
+				otherRich[i].innerHTML = rich.innerHTML;
+			}
+		});
+		clone.setAttribute('title', 'Copy this caption, to all photo captions.');
+		pbe.appendChild(clone);
+		appendRichButtons(pbe, rich, brick);
+		pbe.appendChild(stripe);
+		// end editor portion
+		img.addEventListener('load', () => {
+			let column = parseInt(data.getAttribute('data-photos_height'), 10);
+			const minBrickHeight = 120;
+			this.removeAttribute('style');
+			column += (this.height > minBrickHeight ? this.height : minBrickHeight) + 6;
+			data.setAttribute('data-photos_height', column);
+			lcontent.style.height = `${column}px`;
+		});
+		img.src = typeof reloadedImg.nodeName === 'undefined' ? this.result : reloadedImg.src;
+		pbi.appendChild(img);
+		observer.appendChild(pbi);
+		pbic.appendChild(observer);
+		brickInner.appendChild(pbic); // mayo?
+		brickInner.appendChild(pbe); // lettuce?
+		brick.appendChild(brickInner);
+		if (typeof this.reading !== 'undefined' && this.reading.length > 0) {
+			this.reading.pop();
+		}
+		if (typeof this.reading !== 'undefined' && this.reading.length > 0) {
+			this.reading[this.reading.length - 1].read();
+		}
+		if (typeof reloadedImg.nodeName !== 'undefined') {
+			const hlb = document.getElementsByClassName('hl-bottom');
+			const hlt = document.getElementsByClassName('hl-top');
+			reloadedImg.parentNode.removeChild(reloadedImg);
+			document.body.insertBefore(
+				brick,
+				// eslint-disable-next-line no-nested-ternary
+				hlb.length > 0 ? hlb[0].nextSibling : hlt.length > 0 ? hlt[0] : document.body.firstChild
+			);
+		} else {
+			document.body.appendChild(brick);
+		}
+		brickIndex++;
 	}
 }
 export default MassPostEditorFeatures;
