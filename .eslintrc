@@ -29,6 +29,7 @@
 				"allowParens": true
 			}
 		],
-		"operator-linebreak": "off"
+		"operator-linebreak": "off",
+		"wrap-iife": ["error", "inside"]
 	}
 }

@@ -3643,7 +3643,7 @@ span.im-ready {
 				}
 				r = new FileReader();
 				r.imgCode = `img${getShortCodeForString(files[i].name)}`;
-				r.addEventListener('load', this.loadPhotoIntoDOM);
+				r.addEventListener('load', (img) => this.loadPhotoIntoDOM(img, this));
 				this.reading.push({
 					read: () => {
 						this.reading[this.reading.length - 1].reader.readAsDataURL(
@@ -3711,7 +3711,7 @@ span.im-ready {
 		document.documentElement.addEventListener('drop', drop, false);
 	}
 
-	loadPhotoIntoDOM(reloadedImg) {
+	loadPhotoIntoDOM(reloadedImg, context) {
 		const lcontent = document.getElementsByClassName('l-content')[0];
 		const data = document.getElementById('mass_post_features-plugin_data');
 		let brickIndex = 0;
@@ -3799,26 +3799,27 @@ span.im-ready {
 		appendRichButtons(pbe, rich, brick);
 		pbe.appendChild(stripe);
 		// end editor portion
-		img.addEventListener('load', () => {
+		img.addEventListener('load', (e) => {
 			let column = parseInt(data.getAttribute('data-photos_height'), 10);
 			const minBrickHeight = 120;
-			this.removeAttribute('style');
-			column += (this.height > minBrickHeight ? this.height : minBrickHeight) + 6;
+			const targetImage = e.target;
+			targetImage.removeAttribute('style');
+			column += (targetImage.height > minBrickHeight ? targetImage.height : minBrickHeight) + 6;
 			data.setAttribute('data-photos_height', column);
 			lcontent.style.height = `${column}px`;
 		});
-		img.src = typeof reloadedImg.nodeName === 'undefined' ? this.result : reloadedImg.src;
+		img.src = typeof reloadedImg.nodeName === 'undefined' ? reloadedImg.srcElement.result : reloadedImg.src;
 		pbi.appendChild(img);
 		observer.appendChild(pbi);
 		pbic.appendChild(observer);
 		brickInner.appendChild(pbic); // mayo?
 		brickInner.appendChild(pbe); // lettuce?
 		brick.appendChild(brickInner);
-		if (typeof this.reading !== 'undefined' && this.reading.length > 0) {
-			this.reading.pop();
+		if (typeof context.reading !== 'undefined' && context.reading.length > 0) {
+			context.reading.pop();
 		}
 		if (typeof this.reading !== 'undefined' && this.reading.length > 0) {
-			this.reading[this.reading.length - 1].read();
+			context.reading[context.reading.length - 1].read();
 		}
 		if (typeof reloadedImg.nodeName !== 'undefined') {
 			const hlb = document.getElementsByClassName('hl-bottom');
