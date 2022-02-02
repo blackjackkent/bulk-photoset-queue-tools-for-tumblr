@@ -26,6 +26,7 @@ const photoUploadAndSubmit = (unreadFile, username) => {
 	let formData;
 	let api;
 	// upload first or return or repeat
+	console.log({ uploaded, img });
 	if (uploaded.length !== img.length) {
 		code = img[uploaded.length].firstChild.getAttribute('img-code');
 		formData = new FormData();
@@ -138,15 +139,9 @@ const photoUploadAndSubmit = (unreadFile, username) => {
 							bigHome.setAttribute('height', '40');
 							bigHome.setAttribute('fill', '#555');
 							blogLink.appendChild(bigHome);
-							blogLink.appendChild(
-								document.createTextNode(
-									'Visit your new posts...'
-								)
-							);
+							blogLink.appendChild(document.createTextNode('Visit your new posts...'));
 							blogLink.id = 'return_to_dash_link';
-							blogLink.href = `/blog/${username}${
-								asDraft ? '/drafts' : ''
-							}`;
+							blogLink.href = `/blog/${username}${asDraft ? '/drafts' : ''}`;
 							data.classList.remove('photo-upload-in-progress');
 							asDraftCheck.disabled = false;
 							papb.disabled = false;

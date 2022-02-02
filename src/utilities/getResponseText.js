@@ -17,19 +17,13 @@ const getResponseText = (url, read, header) => {
 		get = 'POST';
 	}
 	const xhttp = new XMLHttpRequest();
-	xhttp.onreadystatechange = () => {
-		if (
-			this.readyState === 4 &&
-			this.status === 200 &&
-			typeof this.responseText !== 'undefined'
-		) {
+	xhttp.onreadystatechange = function onReadyStateChange() {
+		if (this.readyState === 4 && this.status === 200 && typeof this.responseText !== 'undefined') {
 			read(
 				url === '/svc/secure_form_key'
 					? {
 							// we need the puppies, to make a new post
-							puppies: this.getResponseHeader(
-								'x-tumblr-secure-form-key'
-							),
+							puppies: this.getResponseHeader('x-tumblr-secure-form-key'),
 							kittens: /* this.getAllResponseHeaders() */ 0
 					  } // Idk what kittens is, but it happens after success
 					: this.responseText

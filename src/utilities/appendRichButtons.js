@@ -4,10 +4,6 @@ const appendRichButtons = (pbe, rich, brick) => {
 	// pbe meanse photo brick edit, but I recycled this
 	// to make buttons for the caption adder thing too :)
 	const addTextFormatting = (event, element) => {
-		console.log({
-			event,
-			element
-		});
 		event.preventDefault();
 		event.stopPropagation();
 		const sel = window.getSelection();
@@ -184,9 +180,8 @@ const appendRichButtons = (pbe, rich, brick) => {
 		['Cerulean', '#00b8ff', 'rachel'],
 		['Blue', '#7c5cff', 'chandler']
 	];
-	let cb;
 	for (let i = 0; i < colors.length; i++) {
-		cb = butt(colors[i][0]);
+		const cb = butt(colors[i][0]);
 		cb.classList.add(cb.id);
 		cb.removeAttribute('id');
 		cb.setAttribute('title', `${colors[i][0]} ${colors[i][2].charAt(0).toUpperCase()}${colors[i][2].slice(1)}`);

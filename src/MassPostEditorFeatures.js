@@ -16,6 +16,7 @@ class MassPostEditorFeatures {
 		this.initPluginData();
 		this.addBatchPhotosPageLink();
 		this.initBatchPhotosPage();
+		this.loadFormKey();
 	}
 
 	initLContent() {
@@ -3554,28 +3555,12 @@ span.im-ready {
 			const token = document.getElementById('tokens').children;
 			const pb = document.getElementsByClassName('photo-brick');
 			let phTags;
-			let aToken;
 			let child;
-			let a;
-			let addToken = true;
 			for (let j = 0; j < pb.length; j++) {
-				// pb & j :)
 				[phTags] = pb[j].getElementsByClassName('photo-tags');
-				aToken = phTags.children;
 				for (let i = 0; i < token.length; i++) {
-					addToken = true;
-					for (let l = 0; l < aToken.length; l++) {
-						if (token[i].innerHTML === aToken[l].innerHTML) {
-							addToken = false;
-							break;
-						}
-					}
-					if (addToken) {
-						child = token[i].cloneNode(true);
-						a = child.getElementsByTagName('a');
-						a[0].removeAttribute('onclick');
-						phTags.appendChild(child);
-					}
+					child = token[i].cloneNode(true);
+					phTags.appendChild(child);
 				}
 			}
 		});
@@ -3674,7 +3659,7 @@ span.im-ready {
 		postPhotos.disabled = true;
 		postPhotos.id = 'post_all_photos_button';
 		postPhotos.setAttribute('title', 'Post All Photos');
-		postPhotos.addEventListener('click', () => photoUploadAndSubmit(unreadFile, username));
+		postPhotos.addEventListener('click', () => this.uploadPhotos(unreadFile, username));
 		const photosAsDraft = document.createElement('input');
 		photosAsDraft.id = 'photos_as_draft';
 		photosAsDraft.type = 'checkbox';
@@ -3834,6 +3819,25 @@ span.im-ready {
 			document.body.appendChild(brick);
 		}
 		brickIndex++;
+	}
+
+	async loadFormKey() {
+		this.formKey = await fetch('https://www.tumblr.com/about')
+			.then((response) => {
+				if (response.ok) {
+					return response.text();
+				}
+				throw Object.assign(new Error(response.status), { response });
+			})
+			.then((responseText) => {
+				const responseDocument = new DOMParser().parseFromString(responseText, 'text/html');
+				return responseDocument.getElementById('tumblr_form_key').getAttribute('content');
+			})
+			.catch(console.error);
+	}
+
+	uploadPhotos(unreadFile, username) {
+		console.log(this.formKey);
 	}
 }
 export default MassPostEditorFeatures;
