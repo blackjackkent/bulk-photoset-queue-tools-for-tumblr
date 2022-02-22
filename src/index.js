@@ -1,5 +1,5 @@
-import MassPostEditorFeatures from './MassPostEditorFeatures';
+import BulkPhotosetQueueTools from './BulkPhotosetQueueTools';
 
 window.addEventListener('load', () => {
-	const features = new MassPostEditorFeatures();
+	const tools = new BulkPhotosetQueueTools();
 });

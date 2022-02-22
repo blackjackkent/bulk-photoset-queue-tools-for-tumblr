@@ -1,5 +1,5 @@
 {
-	"name": "tumblr-mass-post-features",
+	"name": "tumblr-bulk-photoset-queue-tools",
 	"version": "5.0.0",
 	"description": "A rebuild of Jake Jilg's Tumblr Mass Post Features Tampermonkey script.",
 	"private": true,
@@ -14,7 +14,8 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"build": "npx webpack --config webpack.config.js",
-		"dev": "npm-watch build"
+		"dev": "npm-watch build",
+		"lint": "npm run"
 	},
 	"watch": {
 		"build": {
