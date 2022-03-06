@@ -4,16 +4,19 @@
  * and then schedule a bunch of requeues of the same post.
  */
 
+import BulkPhotosetQueuePanelBuilder from './BulkPhotosetQueuePanelBuilder';
+
 class BulkPhotosetQueueTools {
 	constructor() {
 		this.cssMap = {};
 		this.blogShortname = null;
+		this.blogUuid = null;
 	}
 
 	async init() {
 		this.cssMap = await window.tumblr.getCssMap();
 		await this.fetchBlogId();
-		await this.queuePost();
+		// await this.queuePost();
 	}
 
 	async fetchBlogId() {
@@ -46,6 +49,11 @@ class BulkPhotosetQueueTools {
 		return response.response.posts[0].reblogKey;
 	}
 
+	onFormSubmit(postId, queueCount) {
+		console.log('********* FORM SUBMIT ********');
+		console.log({ postId, queueCount });
+	}
+
 	initMenuButton() {
 		const postTypeButtonClasses = this.cssMap.postTypeButton;
 		const buttonIconClasses = this.cssMap.icon;
@@ -71,19 +79,8 @@ class BulkPhotosetQueueTools {
 	}
 
 	initUploadPanel() {
-		const uploadPanel = document.createElement('div');
-		uploadPanel.setAttribute(
-			'style',
-			`
-				width: 100%;
-				height: 200px;
-				background-color: #fff;
-				color: #000;
-				border-radius: 3px;
-				margin-bottom: 20px;
-			`
-		);
-		uploadPanel.innerText = 'testing';
+		const builder = new BulkPhotosetQueuePanelBuilder(this.onFormSubmit);
+		const uploadPanel = builder.build();
 		const buttonBar = document.querySelector(this.cssMap.bar.map((c) => `.${c}`).join(', '));
 		buttonBar.after(uploadPanel);
 	}
