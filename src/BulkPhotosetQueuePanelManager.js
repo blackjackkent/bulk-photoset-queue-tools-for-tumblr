@@ -1,4 +1,4 @@
-class BulkPhotosetQueuePanelBuilder {
+class BulkPhotosetQueuePanelManager {
 	constructor(onSubmitHandler) {
 		this.onSubmitHandler = onSubmitHandler;
 	}
@@ -24,6 +24,7 @@ class BulkPhotosetQueuePanelBuilder {
 				margin-bottom: 20px;
 				padding: 0;
 				padding-bottom: 20px;
+				display: none;
 			`
 		);
 		this.uploadPanel = uploadPanel;
@@ -142,6 +143,14 @@ class BulkPhotosetQueuePanelBuilder {
 		);
 		this.uploadPanel.appendChild(description2);
 	}
+
+	toggle() {
+		if (this.uploadPanel.style.display === 'none') {
+			this.uploadPanel.style.display = 'block';
+		} else {
+			this.uploadPanel.style.display = 'none';
+		}
+	}
 }
 
-export default BulkPhotosetQueuePanelBuilder;
+export default BulkPhotosetQueuePanelManager;

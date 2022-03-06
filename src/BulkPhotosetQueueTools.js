@@ -4,19 +4,23 @@
  * and then schedule a bunch of requeues of the same post.
  */
 
-import BulkPhotosetQueuePanelBuilder from './BulkPhotosetQueuePanelBuilder';
+import BulkPhotosetQueuePanelManager from './BulkPhotosetQueuePanelManager';
 
 class BulkPhotosetQueueTools {
 	constructor() {
 		this.cssMap = {};
 		this.blogShortname = null;
 		this.blogUuid = null;
+		this.bulkButton = null;
+		this.panelManager = null;
 	}
 
 	async init() {
 		this.cssMap = await window.tumblr.getCssMap();
+		this.panelManager = new BulkPhotosetQueuePanelManager(this.onFormSubmit);
 		await this.fetchBlogId();
-		// await this.queuePost();
+		this.initMenuButton();
+		this.initUploadPanel();
 	}
 
 	async fetchBlogId() {
@@ -67,7 +71,7 @@ class BulkPhotosetQueueTools {
 			iconSpan.classList.add(c);
 		});
 		iconSpan.innerHTML =
-			'<svg viewBox="0 0 17 15" width="40" height="35" fill="RGB(var(--red))"><path d="M14.6 1h-2.7l-.6-1h-6l-.6 1H2.4C1.1 1 0 2 0 3.3v9.3C0 13.9 1.1 15 2.4 15h12.2c1.3 0 2.4-1.1 2.4-2.4V3.3C17 2 15.9 1 14.6 1zM8.3 13.1c-2.9 0-5.2-2.3-5.2-5.1s2.3-5.1 5.2-5.1c2.9 0 5.2 2.3 5.2 5.1s-2.3 5.1-5.2 5.1zm5.9-8.3c-.6 0-1.1-.5-1.1-1.1 0-.6.5-1.1 1.1-1.1s1.1.5 1.1 1.1c0 .6-.5 1.1-1.1 1.1zm-10 3.1c0 1.2.5 2.2 1.3 3 0-.2 0-.4-.1-.6 0-2.2 1.8-4 4.1-4 1.1 0 2 .4 2.8 1.1-.3-2-2-3.4-4-3.4-2.2-.1-4.1 1.7-4.1 3.9z"></path></svg>';
+			'<svg width="40" height="35" viewBox="0 0 15 15" fill="yellow" xmlns="http://www.w3.org/2000/svg"><path d="M14.5 3.5L14.8536 3.85355C15.0488 3.65829 15.0488 3.34171 14.8536 3.14645L14.5 3.5ZM0.5 11.5L0.146447 11.1464C-0.0488153 11.3417 -0.0488153 11.6583 0.146447 11.8536L0.5 11.5ZM11.1464 0.853553L14.1464 3.85355L14.8536 3.14645L11.8536 0.146447L11.1464 0.853553ZM14.1464 3.14645L11.1464 6.14645L11.8536 6.85355L14.8536 3.85355L14.1464 3.14645ZM3.85355 14.1464L0.853554 11.1464L0.146447 11.8536L3.14644 14.8536L3.85355 14.1464ZM0.853554 11.8536L3.85355 8.85355L3.14645 8.14645L0.146447 11.1464L0.853554 11.8536ZM0.5 12H11.5V11H0.5V12ZM15 8.5V7H14V8.5H15ZM11.5 12C13.433 12 15 10.433 15 8.5H14C14 9.88071 12.8807 11 11.5 11V12ZM14.5 3H3.5V4H14.5V3ZM0 6.5V8H1V6.5H0ZM3.5 3C1.567 3 0 4.567 0 6.5H1C1 5.11929 2.11929 4 3.5 4V3Z" fill="black"/></svg>';
 		const textSpan = document.createElement('span');
 		textSpan.innerText = 'Bulk';
 		buttonElement.appendChild(iconSpan);
@@ -79,10 +83,13 @@ class BulkPhotosetQueueTools {
 	}
 
 	initUploadPanel() {
-		const builder = new BulkPhotosetQueuePanelBuilder(this.onFormSubmit);
-		const uploadPanel = builder.build();
+		const uploadPanel = this.panelManager.build();
 		const buttonBar = document.querySelector(this.cssMap.bar.map((c) => `.${c}`).join(', '));
 		buttonBar.after(uploadPanel);
+		this.bulkButton.addEventListener('click', () => {
+			console.log(this.panelManager);
+			this.panelManager.toggle();
+		});
 	}
 }
 export default BulkPhotosetQueueTools;
