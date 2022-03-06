@@ -1,7 +1,7 @@
 {
 	"name": "tumblr-bulk-photoset-queue-tools",
 	"version": "5.0.0",
-	"description": "A rebuild of Jake Jilg's Tumblr Mass Post Features Tampermonkey script.",
+	"description": "A tampermonkey script designed to facilitate mass queueing a set of photos repeatedly on Tumblr.",
 	"private": true,
 	"devDependencies": {
 		"eslint": "^8.6.0",
@@ -14,8 +14,7 @@
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"build": "npx webpack --config webpack.config.js",
-		"dev": "npm-watch build",
-		"lint": "npm run"
+		"dev": "npm-watch build"
 	},
 	"watch": {
 		"build": {

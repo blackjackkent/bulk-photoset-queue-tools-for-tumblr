@@ -1,17 +1,54 @@
+/**
+ * NOTE TO SELF - NEW PLAN
+ * Investigate allowing user to queue one post normally,
+ * and then schedule a bunch of requeues of the same post.
+ */
+
 class BulkPhotosetQueueTools {
 	constructor() {
 		this.cssMap = {};
+		this.blogShortname = null;
 	}
 
 	async init() {
-		const map = await window.tumblr.getCssMap();
-		this.cssMap = map;
+		this.cssMap = await window.tumblr.getCssMap();
+		await this.fetchBlogId();
+		await this.queuePost();
+	}
+
+	async fetchBlogId() {
+		const buttonBar = document.querySelector(this.cssMap.bar.map((c) => `.${c}`).join(', '));
+		const avatar = buttonBar.querySelector(this.cssMap.avatar.map((c) => `.${c} a`).join(', '));
+		this.blogShortname = avatar.getAttribute('title');
+		const blogInfoResponse = await window.tumblr.apiFetch(`/v2/blog/${this.blogShortname}.tumblr.com/info`, {
+			method: 'GET'
+		});
+		this.blogUuid = blogInfoResponse.response.blog.uuid;
+	}
+
+	async queuePost() {
+		const postId = '676933433577111552';
+		const reblogKey = await this.getReblogKey(postId);
+		const response = await window.tumblr.apiFetch(`/v2/blog/${this.blogShortname}.tumblr.com/posts`, {
+			method: 'POST',
+			body: {
+				state: 'queue',
+				parent_tumblelog_uuid: this.blogUuid,
+				parent_post_id: postId,
+				reblog_key: reblogKey
+			}
+		});
+		console.log(response);
+	}
+
+	async getReblogKey(postId) {
+		const response = await window.tumblr.apiFetch(`/v2/blog/${this.blogShortname}.tumblr.com/posts?id=${postId}`);
+		return response.response.posts[0].reblogKey;
 	}
 
 	initMenuButton() {
 		const postTypeButtonClasses = this.cssMap.postTypeButton;
 		const buttonIconClasses = this.cssMap.icon;
-		const barSelector = this.cssMap.bar.map((c) => `.${c} > ul`).join(', ');
 		const liElement = document.createElement('li');
 		const buttonElement = document.createElement('button');
 		postTypeButtonClasses.forEach((c) => {
@@ -28,8 +65,27 @@ class BulkPhotosetQueueTools {
 		buttonElement.appendChild(iconSpan);
 		buttonElement.appendChild(textSpan);
 		liElement.appendChild(buttonElement);
-		document.querySelector(barSelector).appendChild(liElement);
+		const buttonBarUl = document.querySelector(this.cssMap.bar.map((c) => `.${c} > ul`).join(', '));
+		buttonBarUl.appendChild(liElement);
 		this.bulkButton = liElement;
+	}
+
+	initUploadPanel() {
+		const uploadPanel = document.createElement('div');
+		uploadPanel.setAttribute(
+			'style',
+			`
+				width: 100%;
+				height: 200px;
+				background-color: #fff;
+				color: #000;
+				border-radius: 3px;
+				margin-bottom: 20px;
+			`
+		);
+		uploadPanel.innerText = 'testing';
+		const buttonBar = document.querySelector(this.cssMap.bar.map((c) => `.${c}`).join(', '));
+		buttonBar.after(uploadPanel);
 	}
 }
 export default BulkPhotosetQueueTools;
