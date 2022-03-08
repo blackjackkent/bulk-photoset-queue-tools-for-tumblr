@@ -1,6 +1,5 @@
-import BulkPhotosetQueueTools from './BulkPhotosetQueueTools';
+import tools from './BulkPhotosetQueueTools';
 
 window.addEventListener('load', async () => {
-	const tools = new BulkPhotosetQueueTools();
 	await tools.init();
 });
