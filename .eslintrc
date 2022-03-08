@@ -30,6 +30,7 @@
 			}
 		],
 		"operator-linebreak": "off",
-		"wrap-iife": ["error", "inside"]
+		"wrap-iife": ["error", "inside"],
+		"no-alert": "off"
 	}
 }

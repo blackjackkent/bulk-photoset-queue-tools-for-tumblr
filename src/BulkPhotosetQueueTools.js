@@ -1,9 +1,3 @@
-/**
- * NOTE TO SELF - NEW PLAN
- * Investigate allowing user to queue one post normally,
- * and then schedule a bunch of requeues of the same post.
- */
-
 import BulkPhotosetQueuePanelManager from './BulkPhotosetQueuePanelManager';
 
 class BulkPhotosetQueueTools {
@@ -33,9 +27,7 @@ class BulkPhotosetQueueTools {
 		this.blogUuid = blogInfoResponse.response.blog.uuid;
 	}
 
-	async queuePost() {
-		const postId = '676933433577111552';
-		const reblogKey = await this.getReblogKey(postId);
+	async queuePost(postId, reblogKey) {
 		const response = await window.tumblr.apiFetch(`/v2/blog/${this.blogShortname}.tumblr.com/posts`, {
 			method: 'POST',
 			body: {
@@ -45,17 +37,37 @@ class BulkPhotosetQueueTools {
 				reblog_key: reblogKey
 			}
 		});
-		console.log(response);
 	}
 
 	async getReblogKey(postId) {
 		const response = await window.tumblr.apiFetch(`/v2/blog/${this.blogShortname}.tumblr.com/posts?id=${postId}`);
+		console.log(response);
 		return response.response.posts[0].reblogKey;
 	}
 
-	onFormSubmit(postId, queueCount) {
-		console.log('********* FORM SUBMIT ********');
-		console.log({ postId, queueCount });
+	async onFormSubmit(postId, queueCount) {
+		console.log(this);
+		const parsedUserInput = this.parseUserInput(postId, queueCount);
+		if (!parsedUserInput) {
+			return;
+		}
+		const reblogKey = await this.getReblogKey(postId);
+	}
+
+	parseUserInput(postId, queueCount) {
+		let parsedPostId;
+		let parsedQueueCount;
+		try {
+			parsedPostId = parseInt(postId, 10);
+			parsedQueueCount = parseInt(queueCount, 10);
+		} catch (e) {
+			alert('Error - you must enter a valid post ID and queue count. (Both should be numeric.)');
+			return null;
+		}
+		return {
+			parsedPostId,
+			parsedQueueCount
+		};
 	}
 
 	initMenuButton() {
@@ -87,7 +99,6 @@ class BulkPhotosetQueueTools {
 		const buttonBar = document.querySelector(this.cssMap.bar.map((c) => `.${c}`).join(', '));
 		buttonBar.after(uploadPanel);
 		this.bulkButton.addEventListener('click', () => {
-			console.log(this.panelManager);
 			this.panelManager.toggle();
 		});
 	}
