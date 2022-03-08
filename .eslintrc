@@ -31,6 +31,7 @@
 		],
 		"operator-linebreak": "off",
 		"wrap-iife": ["error", "inside"],
-		"no-alert": "off"
+		"no-alert": "off",
+		"no-await-in-loop": "off"
 	}
 }

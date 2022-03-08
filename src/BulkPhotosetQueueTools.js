@@ -54,7 +54,9 @@ const onFormSubmit = async (postId, queueCount) => {
 		return;
 	}
 	const { reblogKey, tags } = parentPost;
-	await queuePost(postId, reblogKey, tags);
+	for (let i = 0; i < queueCount; i++) {
+		await queuePost(postId, reblogKey, tags);
+	}
 };
 
 const initMenuButton = () => {
