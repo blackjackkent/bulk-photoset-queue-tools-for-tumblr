@@ -112,6 +112,7 @@ class BulkPhotosetQueuePanelManager {
 		form.appendChild(input2Wrapper);
 
 		const submitWrapper = document.createElement('div');
+		submitWrapper.classList.add('bpqt-submit-wrapper');
 		const submitButton = document.createElement('button');
 		submitButton.setAttribute('type', 'submit');
 		submitButton.innerText = 'Submit';
@@ -189,6 +190,28 @@ class BulkPhotosetQueuePanelManager {
 
 	hideLoader() {
 		this.loadingIcon.classList.add('hidden');
+	}
+
+	showCompletionMessage(successCount, errorCount) {
+		const submitWrapper = document.getElementsByClassName('bpqt-submit-wrapper')[0];
+		const message = document.createElement('p');
+		message.classList.add('bpqt-completion-message');
+		message.innerHTML = `Complete! <strong>${successCount}</strong> queued successfully and <strong>${errorCount}</strong> failed.`;
+		message.setAttribute(
+			'style',
+			`
+				padding: 0 20px 20px;
+				margin: 0;
+			`
+		);
+		submitWrapper.after(message);
+	}
+
+	hideCompletionMessage() {
+		const elements = document.getElementsByClassName('bpqt-completion-message');
+		while (elements.length > 0) {
+			elements[0].parentNode.removeChild(elements[0]);
+		}
 	}
 }
 

@@ -16,7 +16,7 @@ const fetchBlogId = async () => {
 	blogUuid = blogInfoResponse.response.blog.uuid;
 };
 
-const queuePost = async (postId, reblogKey, tags, forceError = false) => {
+const queuePost = async (postId, reblogKey, tags) => {
 	try {
 		const response = await window.tumblr.apiFetch(`/v2/blog/${blogShortname}.tumblr.com/posts`, {
 			method: 'POST',
@@ -52,16 +52,25 @@ const getParentPost = async (postId) => {
 };
 
 const onFormSubmit = async (postId, queueCount) => {
+	panelManager.hideCompletionMessage();
 	const parentPost = await getParentPost(postId);
 	if (!parentPost) {
 		return;
 	}
 	panelManager.showLoader();
 	const { reblogKey, tags } = parentPost;
+	let errorCount = 0;
+	let successCount = 0;
 	for (let i = 0; i < queueCount; i++) {
-		await queuePost(postId, reblogKey, tags);
+		const result = await queuePost(postId, reblogKey, tags);
+		if (result === null) {
+			errorCount++;
+		} else {
+			successCount++;
+		}
 	}
 	panelManager.hideLoader();
+	panelManager.showCompletionMessage(successCount, errorCount);
 };
 
 const initMenuButton = () => {
