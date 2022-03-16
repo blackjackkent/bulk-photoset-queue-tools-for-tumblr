@@ -23,7 +23,7 @@ module.exports = {
 	plugins: [
 		new webpack.BannerPlugin({
 			banner: `// ==UserScript==
-// @name        Tumblr - Bulk Photoset Queue Tools
+// @name        Bulk Photoset Queue Tools for Tumblr
 // @namespace   https://github.com/blackjackkent
 // @description A tool for facilitating bulk repeated queueing of image photosets on Tumblr.
 // @include     https://www.tumblr.com/blog/*/queue
