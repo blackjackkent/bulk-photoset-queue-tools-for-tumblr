@@ -1,3 +1,4 @@
+import { addStyle } from './utility';
 class BulkPhotosetQueuePanelManager {
 	constructor(onSubmitHandler) {
 		this.onSubmitHandler = onSubmitHandler;
@@ -110,7 +111,7 @@ class BulkPhotosetQueuePanelManager {
 		);
 		form.appendChild(input2Wrapper);
 
-		// Add form to panel
+		const submitWrapper = document.createElement('div');
 		const submitButton = document.createElement('button');
 		submitButton.setAttribute('type', 'submit');
 		submitButton.innerText = 'Submit';
@@ -124,7 +125,37 @@ class BulkPhotosetQueuePanelManager {
 				border-radius: 4px;
 			`
 		);
-		form.appendChild(submitButton);
+		submitWrapper.appendChild(submitButton);
+		addStyle([
+			`.bpqt_loader {
+				width: 24px;
+				height: 24px;
+				border: 5px solid #001935;
+				border-bottom-color: transparent;
+				border-radius: 50%;
+				display: inline-block;
+				box-sizing: border-box;
+				animation: rotation 1s linear infinite;
+				vertical-align: middle;
+				}`,
+			`.bpqt_loader.hidden {
+					display: none;
+				}`,
+			`@keyframes rotation {
+				0% {
+					transform: rotate(0deg);
+				}
+				100% {
+					transform: rotate(360deg);
+				}
+				}`
+		]);
+		const loadingIcon = document.createElement('span');
+		loadingIcon.classList.add('bpqt_loader');
+		loadingIcon.classList.add('hidden');
+		this.loadingIcon = loadingIcon;
+		submitWrapper.appendChild(loadingIcon);
+		form.appendChild(submitWrapper);
 		this.uploadPanel.appendChild(form);
 	}
 
@@ -150,6 +181,14 @@ class BulkPhotosetQueuePanelManager {
 		} else {
 			this.uploadPanel.style.display = 'none';
 		}
+	}
+
+	showLoader() {
+		this.loadingIcon.classList.remove('hidden');
+	}
+
+	hideLoader() {
+		this.loadingIcon.classList.add('hidden');
 	}
 }
 

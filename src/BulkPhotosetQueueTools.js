@@ -16,18 +16,22 @@ const fetchBlogId = async () => {
 	blogUuid = blogInfoResponse.response.blog.uuid;
 };
 
-const queuePost = async (postId, reblogKey, tags) => {
-	console.log({ postId, reblogKey, tags });
-	const response = await window.tumblr.apiFetch(`/v2/blog/${blogShortname}.tumblr.com/posts`, {
-		method: 'POST',
-		body: {
-			state: 'queue',
-			parent_tumblelog_uuid: blogUuid,
-			parent_post_id: postId,
-			reblog_key: reblogKey,
-			tags: tags.join(',')
-		}
-	});
+const queuePost = async (postId, reblogKey, tags, forceError = false) => {
+	try {
+		const response = await window.tumblr.apiFetch(`/v2/blog/${blogShortname}.tumblr.com/posts`, {
+			method: 'POST',
+			body: {
+				state: 'queue',
+				parent_tumblelog_uuid: blogUuid,
+				parent_post_id: postId,
+				reblog_key: reblogKey,
+				tags: tags.join(',')
+			}
+		});
+		return response;
+	} catch (e) {
+		return null;
+	}
 };
 
 const getParentPost = async (postId) => {
@@ -38,7 +42,6 @@ const getParentPost = async (postId) => {
 				'You have entered an invalid post ID. Please try again and ensure you are using only the numeric post ID of the post you wish to re-queue.'
 			);
 		}
-		console.log(response.response.posts[0]);
 		return response.response.posts[0];
 	} catch (e) {
 		alert(
@@ -53,10 +56,12 @@ const onFormSubmit = async (postId, queueCount) => {
 	if (!parentPost) {
 		return;
 	}
+	panelManager.showLoader();
 	const { reblogKey, tags } = parentPost;
 	for (let i = 0; i < queueCount; i++) {
 		await queuePost(postId, reblogKey, tags);
 	}
+	panelManager.hideLoader();
 };
 
 const initMenuButton = () => {
