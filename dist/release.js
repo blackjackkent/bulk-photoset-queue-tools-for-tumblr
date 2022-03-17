@@ -1,9 +1,9 @@
 // ==UserScript==
-// @name        Tumblr - Bulk Photoset Queue Tools
+// @name        Bulk Photoset Queue Tools for Tumblr
 // @namespace   https://github.com/blackjackkent
 // @description A tool for facilitating bulk repeated queueing of image photosets on Tumblr.
 // @include     https://www.tumblr.com/blog/*/queue
-// @version     1.0
+// @version     1.1.0
 // @grant       none
 // @run-at      document-end
 // ==/UserScript==
@@ -270,16 +270,15 @@ const fetchBlogId = async () => {
 	blogUuid = blogInfoResponse.response.blog.uuid;
 };
 
-const queuePost = async (postId, reblogKey, tags) => {
+const queuePost = async (parentPost) => {
 	try {
 		const response = await window.tumblr.apiFetch(`/v2/blog/${blogShortname}.tumblr.com/posts`, {
 			method: 'POST',
 			body: {
 				state: 'queue',
-				parent_tumblelog_uuid: blogUuid,
-				parent_post_id: postId,
-				reblog_key: reblogKey,
-				tags: tags.join(',')
+				content: parentPost.content,
+				layout: parentPost.layout,
+				tags: parentPost.tags.join(',')
 			}
 		});
 		return response;
@@ -312,11 +311,10 @@ const onFormSubmit = async (postId, queueCount) => {
 		return;
 	}
 	panelManager.showLoader();
-	const { reblogKey, tags } = parentPost;
 	let errorCount = 0;
 	let successCount = 0;
 	for (let i = 0; i < queueCount; i++) {
-		const result = await queuePost(postId, reblogKey, tags);
+		const result = await queuePost(parentPost);
 		if (result === null) {
 			errorCount++;
 		} else {

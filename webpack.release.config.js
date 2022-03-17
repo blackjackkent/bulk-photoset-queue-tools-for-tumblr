@@ -9,7 +9,7 @@ const VERSION = pkg.version;
 module.exports = {
 	entry: './src/index.js',
 	output: {
-		filename: `release.${VERSION}.js`,
+		filename: 'release.js',
 		path: path.resolve(__dirname, 'dist')
 	},
 	optimization: {
