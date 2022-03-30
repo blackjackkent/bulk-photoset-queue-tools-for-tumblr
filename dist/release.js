@@ -2,6 +2,8 @@
 // @name        Bulk Photoset Queue Tools for Tumblr
 // @namespace   https://github.com/blackjackkent
 // @description A tool for facilitating bulk repeated queueing of image photosets on Tumblr.
+// @author      Rosalind Wills (@blackjackkent)
+// @website     https://www.patreon.com/blackjacksoftware
 // @include     https://www.tumblr.com/blog/*/queue
 // @version     1.1.0
 // @grant       none

@@ -94,7 +94,7 @@ class BulkPhotosetQueuePanelManager {
 		queueCountLabel.innerText = 'Number of times to queue: ';
 		const queueCountInput = document.createElement('select');
 		queueCountInput.setAttribute('name', 'bulkQueueCount');
-		for (let i = 0; i < 10; i++) {
+		for (let i = 0; i < 20; i++) {
 			const option = document.createElement('option');
 			option.value = i + 1;
 			option.text = i + 1;
