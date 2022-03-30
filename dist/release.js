@@ -6,7 +6,8 @@
 // @website     https://www.patreon.com/blackjacksoftware
 // @include     https://www.tumblr.com/
 // @downloadURL https://raw.githubusercontent.com/blackjackkent/bulk-photoset-queue-tools-for-tumblr/production/dist/release.js
-// @version     1.2.3
+// @updateURL   https://raw.githubusercontent.com/blackjackkent/bulk-photoset-queue-tools-for-tumblr/production/dist/release.js
+// @version     1.2.4
 // @grant       none
 // @run-at      document-end
 // ==/UserScript==
