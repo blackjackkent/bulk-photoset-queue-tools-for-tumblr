@@ -1,6 +1,6 @@
 {
 	"name": "tumblr-bulk-photoset-queue-tools",
-	"version": "1.2.3",
+	"version": "1.2.4",
 	"description": "A tampermonkey script designed to facilitate mass queueing a set of photos repeatedly on Tumblr.",
 	"private": true,
 	"devDependencies": {
