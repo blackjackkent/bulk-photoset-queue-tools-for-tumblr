@@ -5,8 +5,8 @@
 // @author      Rosalind Wills (@blackjackkent)
 // @website     https://www.patreon.com/blackjacksoftware
 // @include     https://www.tumblr.com/
-// @downloadURL https://github.com/blackjackkent/bulk-photoset-queue-tools-for-tumblr/blob/production/dist/release.js
-// @version     1.1.0
+// @downloadURL https://raw.githubusercontent.com/blackjackkent/bulk-photoset-queue-tools-for-tumblr/production/dist/release.js
+// @version     1.2.1
 // @grant       none
 // @run-at      document-end
 // ==/UserScript==
