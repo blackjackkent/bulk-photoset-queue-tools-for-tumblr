@@ -9,7 +9,7 @@ const VERSION = pkg.version;
 module.exports = {
 	entry: './src/index.js',
 	output: {
-		filename: 'release.js',
+		filename: 'bulk-photoset-queue-tools.user.js',
 		path: path.resolve(__dirname, 'dist')
 	},
 	optimization: {
@@ -29,8 +29,8 @@ module.exports = {
 // @author      Rosalind Wills (@blackjackkent)
 // @website     https://www.patreon.com/blackjacksoftware
 // @include     https://www.tumblr.com/
-// @downloadURL https://raw.githubusercontent.com/blackjackkent/bulk-photoset-queue-tools-for-tumblr/production/dist/release.js
-// @updateURL   https://raw.githubusercontent.com/blackjackkent/bulk-photoset-queue-tools-for-tumblr/production/dist/release.js
+// @downloadURL https://raw.githubusercontent.com/blackjackkent/bulk-photoset-queue-tools-for-tumblr/production/dist/bulk-photoset-queue-tools.user.js
+// @updateURL   https://raw.githubusercontent.com/blackjackkent/bulk-photoset-queue-tools-for-tumblr/production/dist/bulk-photoset-queue-tools.user.js
 // @version     ${VERSION}
 // @grant       none
 // @run-at      document-end
