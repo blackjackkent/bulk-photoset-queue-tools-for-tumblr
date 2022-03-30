@@ -28,7 +28,8 @@ module.exports = {
 // @description A tool for facilitating bulk repeated queueing of image photosets on Tumblr.
 // @author      Rosalind Wills (@blackjackkent)
 // @website     https://www.patreon.com/blackjacksoftware
-// @include     https://www.tumblr.com/blog/*/queue
+// @include     https://www.tumblr.com/
+// @downloadURL https://github.com/blackjackkent/bulk-photoset-queue-tools-for-tumblr/blob/production/dist/release.js
 // @version     ${VERSION}
 // @grant       none
 // @run-at      document-end

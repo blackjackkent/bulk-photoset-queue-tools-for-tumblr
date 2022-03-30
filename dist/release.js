@@ -4,7 +4,8 @@
 // @description A tool for facilitating bulk repeated queueing of image photosets on Tumblr.
 // @author      Rosalind Wills (@blackjackkent)
 // @website     https://www.patreon.com/blackjacksoftware
-// @include     https://www.tumblr.com/blog/*/queue
+// @include     https://www.tumblr.com/
+// @downloadURL https://github.com/blackjackkent/bulk-photoset-queue-tools-for-tumblr/blob/production/dist/release.js
 // @version     1.1.0
 // @grant       none
 // @run-at      document-end
@@ -130,7 +131,7 @@ class BulkPhotosetQueuePanelManager {
 		queueCountLabel.innerText = 'Number of times to queue: ';
 		const queueCountInput = document.createElement('select');
 		queueCountInput.setAttribute('name', 'bulkQueueCount');
-		for (let i = 0; i < 10; i++) {
+		for (let i = 0; i < 20; i++) {
 			const option = document.createElement('option');
 			option.value = i + 1;
 			option.text = i + 1;
@@ -258,7 +259,6 @@ class BulkPhotosetQueuePanelManager {
 
 let cssMap = {};
 let blogShortname = null;
-let blogUuid = null;
 let bulkButton = null;
 let panelManager = null;
 
@@ -266,10 +266,6 @@ const fetchBlogId = async () => {
 	const buttonBar = document.querySelector(cssMap.bar.map((c) => `.${c}`).join(', '));
 	const avatar = buttonBar.querySelector(cssMap.avatar.map((c) => `.${c} a`).join(', '));
 	blogShortname = avatar.getAttribute('title');
-	const blogInfoResponse = await window.tumblr.apiFetch(`/v2/blog/${blogShortname}.tumblr.com/info`, {
-		method: 'GET'
-	});
-	blogUuid = blogInfoResponse.response.blog.uuid;
 };
 
 const queuePost = async (parentPost) => {

@@ -246,7 +246,6 @@ class BulkPhotosetQueuePanelManager {
 
 let cssMap = {};
 let blogShortname = null;
-let blogUuid = null;
 let bulkButton = null;
 let panelManager = null;
 
@@ -254,10 +253,6 @@ const fetchBlogId = async () => {
 	const buttonBar = document.querySelector(cssMap.bar.map((c) => `.${c}`).join(', '));
 	const avatar = buttonBar.querySelector(cssMap.avatar.map((c) => `.${c} a`).join(', '));
 	blogShortname = avatar.getAttribute('title');
-	const blogInfoResponse = await window.tumblr.apiFetch(`/v2/blog/${blogShortname}.tumblr.com/info`, {
-		method: 'GET'
-	});
-	blogUuid = blogInfoResponse.response.blog.uuid;
 };
 
 const queuePost = async (parentPost) => {
