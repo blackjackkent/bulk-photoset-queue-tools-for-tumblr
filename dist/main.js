@@ -356,6 +356,7 @@ const init = async () => {
 
 
 window.addEventListener('load', async () => {
+	console.log('testing');
 	await BulkPhotosetQueueTools.init();
 });
 
